@@ -18,6 +18,13 @@ class SignalManager(object):
             signal.signal(signal.SIGTERM, self.exit_gracefully)
         else:
             signal.signal(signal.SIGTSTP, self.exit_gracefully)
+
+            # A Deck-specific tweak...
+            # We want it to handle SIGTERM like it handles SIGTSTP, and do a graceful shutdown
+            # where it finishes any in-progress tasks, but doesn't grab any new ones.
+            # This allows for graceful shutdowns during Kubernetes redeployments.
+            signal.signal(signal.SIGTERM, self.exit_gracefully)
+
             signal.signal(signal.SIGUSR1, self.speed_up)
             signal.signal(signal.SIGUSR2, self.slow_down)
 
