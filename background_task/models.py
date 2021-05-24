@@ -160,7 +160,8 @@ class Task(models.Model):
         (EVERY_4_WEEKS, 'every 4 weeks'),
         (NEVER, 'never'),
     )
-    repeat = models.BigIntegerField(choices=REPEAT_CHOICES, default=NEVER)
+    # repeat = models.BigIntegerField(choices=REPEAT_CHOICES, default=NEVER)
+    repeat = models.BigIntegerField(default=NEVER)
     repeat_until = models.DateTimeField(null=True, blank=True)
 
     # the "name" of the queue this is to be run on
