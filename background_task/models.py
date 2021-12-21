@@ -48,8 +48,9 @@ class TaskManager(models.Manager):
     def find_available(self, queue=None):
         now = timezone.now()
         qs = self.unlocked(now)
-        if queue:
-            qs = qs.filter(queue=queue)
+        # if queue:
+        #     qs = qs.filter(queue=queue)
+        qs = qs.filter(queue=queue)
         ready = qs.filter(run_at__lte=now, failed_at=None)
         _priority_ordering = '{}priority'.format(app_settings.BACKGROUND_TASK_PRIORITY_ORDERING)
         ready = ready.order_by(_priority_ordering, 'run_at')
@@ -59,6 +60,7 @@ class TaskManager(models.Manager):
             currently_locked = self.locked(now).count()
             count = app_settings.BACKGROUND_TASK_ASYNC_THREADS - \
                                     (currently_locked - currently_failed)
+            logger.debug(f"{ready=} {count=}")
             if count > 0:
                 ready = ready[:count]
             else:
